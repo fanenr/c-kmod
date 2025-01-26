@@ -1,0 +1,8 @@
+.clangd
+.project
+
+*.*
+
+!*.c
+
+*.mod.c
