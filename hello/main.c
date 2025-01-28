@@ -1,3 +1,5 @@
+#include "util.h"
+
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/printk.h>
@@ -25,14 +27,7 @@ hello_init (void)
   pr_info ("name: %s\n", name);
 
   char buff[256];
-
-  for (uint i = 0, len = 0; i < langn; i++)
-    {
-      char *sep = i ? ", " : "";
-      len += scnprintf (buff + len, sizeof (buff) - len, "%s%s", sep,
-                        langs[i]);
-    }
-
+  strarr (buff, langs, sizeof (buff), langn);
   pr_info ("langs: [%s]\n", buff);
 
   return 0;
