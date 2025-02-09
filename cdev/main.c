@@ -107,8 +107,8 @@ hello_release (struct inode *inode, struct file *filp)
 static ssize_t
 hello_read (struct file *filp, char __user *buff, size_t size, loff_t *offp)
 {
-  char hello_str[] = "hello\n";
-  size_t len = sizeof (hello_str) - 1;
+  char str[] = "hello";
+  size_t len = sizeof (str) - 1;
 
   if (*offp >= len)
     return 0;
@@ -116,7 +116,7 @@ hello_read (struct file *filp, char __user *buff, size_t size, loff_t *offp)
   if (size > len - *offp)
     size = len - *offp;
 
-  if (copy_to_user (buff, hello_str + *offp, size))
+  if (copy_to_user (buff, str + *offp, size))
     return -EFAULT;
 
   *offp += size;
