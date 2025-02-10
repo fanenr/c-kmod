@@ -27,7 +27,7 @@ hello_init (void)
   pr_info ("name: %s\n", name);
 
   char buff[256];
-  strarr (buff, langs, sizeof (buff), langn);
+  hello_strarr (buff, langs, sizeof (buff), langn);
   pr_info ("langs: [%s]\n", buff);
 
   return 0;
