@@ -127,6 +127,7 @@ static ssize_t
 hello_write (struct file *filp, const char __user *buff, size_t size,
              loff_t *offp)
 {
+  pr_alert ("This operation is not supported\n");
   return -EINVAL;
 }
 
