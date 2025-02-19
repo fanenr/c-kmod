@@ -47,9 +47,9 @@ hello_read (struct file *filp, char __user *buff, size_t size, loff_t *offp)
 {
   ssize_t ret;
   char str[] = "hello";
-  int len = sizeof (str) - 1;
+  size = min (size - 1, sizeof (str));
 
-  if (*offp >= len || copy_to_user (buff, str, len))
+  if (*offp >= size || copy_to_user (buff, str, size))
     {
       pr_info ("copy_to_user failed\n");
       ret = 0;
@@ -57,8 +57,8 @@ hello_read (struct file *filp, char __user *buff, size_t size, loff_t *offp)
   else
     {
       pr_info ("procfile read %s\n", filp->f_path.dentry->d_name.name);
-      *offp += len;
-      ret = len;
+      *offp += size;
+      ret = size;
     }
 
   return ret;
