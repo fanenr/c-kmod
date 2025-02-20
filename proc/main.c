@@ -1,7 +1,7 @@
 #include <linux/module.h>
 #include <linux/proc_fs.h>
 
-#define DATA_MAX 1024
+#define DATA_MAX 1024UL
 #define PROC_NAME "hello"
 
 static char data[DATA_MAX];
@@ -66,10 +66,10 @@ hello_read (struct file *filp, char __user *buff, size_t size, loff_t *offp)
 
 {
   ssize_t ret;
-  char str[] = "hello";
-  size = min (size - 1, sizeof (str));
+  loff_t off = *offp;
+  size = min (size, data_size - off);
 
-  if (*offp >= size || copy_to_user (buff, str, size))
+  if (off >= data_size || copy_to_user (buff, data + off, size))
     {
       pr_info ("copy_to_user failed\n");
       ret = 0;
@@ -88,11 +88,10 @@ static ssize_t
 hello_write (struct file *filp, const char __user *buff, size_t size,
              loff_t *offp)
 {
-  size = min (size, DATA_MAX - 1);
+  size = min (size, DATA_MAX);
 
   if (copy_from_user (data, buff, size))
     return -EFAULT;
-  data[size] = 0;
 
   *offp += size;
   data_size = size;
