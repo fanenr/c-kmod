@@ -8,19 +8,22 @@ static char data[DATA_MAX];
 static size_t data_size = 0;
 static struct proc_dir_entry *hello_proc;
 
+static int hello_open (struct inode *inode, struct file *filp);
+static int hello_close (struct inode *inode, struct file *filp);
 static ssize_t hello_read (struct file *filp, char __user *buff, size_t size,
                            loff_t *offp);
 static ssize_t hello_write (struct file *filp, const char __user *buff,
                             size_t size, loff_t *offp);
 
 static const struct proc_ops hello_fops = {
+  .proc_open = hello_open,
   .proc_read = hello_read,
   .proc_write = hello_write,
+  .proc_release = hello_close,
 };
 
 static int __init
 hello_init (void)
-
 {
   hello_proc = proc_create (PROC_NAME, 0644, NULL, &hello_fops);
 
@@ -29,6 +32,9 @@ hello_init (void)
       pr_alert ("could not initialize /proc/%s\n", PROC_NAME);
       return -ENOMEM;
     }
+
+  proc_set_size (hello_proc, 80);
+  proc_set_user (hello_proc, GLOBAL_ROOT_UID, GLOBAL_ROOT_GID);
 
   pr_info ("/proc/%s created\n", PROC_NAME);
   return 0;
@@ -39,6 +45,20 @@ hello_exit (void)
 {
   proc_remove (hello_proc);
   pr_info ("/proc/%s removed\n", PROC_NAME);
+}
+
+static int
+hello_open (struct inode *inode, struct file *filp)
+{
+  try_module_get (THIS_MODULE);
+  return 0;
+}
+
+static int
+hello_close (struct inode *inode, struct file *filp)
+{
+  module_put (THIS_MODULE);
+  return 0;
 }
 
 static ssize_t
