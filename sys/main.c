@@ -1,57 +1,61 @@
 #include <linux/module.h>
 
-static int myvariable = 0;
-static struct kobject *mymodule;
+#define KOBJ_NAME "hello"
 
-static ssize_t
-myvariable_show (struct kobject *kobj, struct kobj_attribute *attr, char *buf)
-{
-  return sprintf (buf, "%d\n", myvariable);
-}
+static int var = 0;
+static struct kobject *kobj;
 
-static ssize_t
-myvariable_store (struct kobject *kobj, struct kobj_attribute *attr,
-                  const char *buf, size_t count)
-{
-  sscanf (buf, "%d", &myvariable);
-  return count;
-}
+static ssize_t var_show (struct kobject *kobj, struct kobj_attribute *attr,
+                         char *buff);
+static ssize_t var_store (struct kobject *kobj, struct kobj_attribute *attr,
+                          const char *buff, size_t count);
 
-static struct kobj_attribute myvariable_attribute
-    = __ATTR (myvariable, 0660, myvariable_show, myvariable_store);
+static struct kobj_attribute var_attr
+    = __ATTR (var, 0660, var_show, var_store);
 
 static int __init
-mymodule_init (void)
+kobj_init (void)
 {
-  int error = 0;
-
-  mymodule = kobject_create_and_add ("mymodule", kernel_kobj);
-
-  if (!mymodule)
+  if (!(kobj = kobject_create_and_add (KOBJ_NAME, kernel_kobj)))
     return -ENOMEM;
 
-  error = sysfs_create_file (mymodule, &myvariable_attribute.attr);
-
-  if (error)
+  int error;
+  if ((error = sysfs_create_file (kobj, &var_attr.attr)))
     {
-      kobject_put (mymodule);
-      pr_info ("failed to create the myvariable file "
-               "in /sys/kernel/mymodule\n");
+      kobject_put (kobj);
+      pr_info ("failed to create the /sys/kernel/hello/var\n");
+      return error;
     }
 
-  pr_info ("mymodule: initialized\n");
-
-  return error;
+  pr_info ("/sys/kernel/hello/var created\n");
+  return 0;
 }
 
 static void __exit
-mymodule_exit (void)
+kobj_exit (void)
 {
-  pr_info ("mymodule: Exit success\n");
-  kobject_put (mymodule);
+  pr_info ("/sys/kernel/hello/var removed\n");
+  kobject_put (kobj);
 }
 
-module_init (mymodule_init);
-module_exit (mymodule_exit);
+static ssize_t
+var_show (struct kobject *kobj, struct kobj_attribute *attr, char *buff)
+{
+  return sprintf (buff, "%d\n", var);
+}
 
-MODULE_LICENSE ("GPL");
+static ssize_t
+var_store (struct kobject *kobj, struct kobj_attribute *attr, const char *buff,
+           size_t count)
+{
+  sscanf (buff, "%d", &var);
+  return count;
+}
+
+module_init (kobj_init);
+module_exit (kobj_exit);
+
+MODULE_AUTHOR ("Arthur");
+MODULE_VERSION ("0.0.1");
+MODULE_LICENSE ("GPL v2");
+MODULE_DESCRIPTION ("A simple module");
