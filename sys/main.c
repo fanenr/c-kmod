@@ -4,6 +4,7 @@
 
 static int var = 0;
 static struct kobject *kobj;
+static const char *KOBJ_PATH = KOBJ_NAME "/" __stringify (var);
 
 static ssize_t var_show (struct kobject *kobj, struct kobj_attribute *attr,
                          char *buff);
@@ -23,18 +24,18 @@ kobj_init (void)
   if ((error = sysfs_create_file (kobj, &var_attr.attr)))
     {
       kobject_put (kobj);
-      pr_info ("failed to create the /sys/kernel/hello/var\n");
+      pr_info ("failed to create the /sys/kernel/%s", KOBJ_PATH);
       return error;
     }
 
-  pr_info ("/sys/kernel/hello/var created\n");
+  pr_info ("/sys/kernel/%s created\n", KOBJ_PATH);
   return 0;
 }
 
 static void __exit
 kobj_exit (void)
 {
-  pr_info ("/sys/kernel/hello/var removed\n");
+  pr_info ("/sys/kernel/%s removed\n", KOBJ_PATH);
   kobject_put (kobj);
 }
 
