@@ -7,9 +7,9 @@ static struct kobject *kobj;
 static const char *KOBJ_PATH = KOBJ_NAME "/" __stringify (var);
 
 static ssize_t var_show (struct kobject *kobj, struct kobj_attribute *attr,
-                         char *buff);
+			 char *buff);
 static ssize_t var_store (struct kobject *kobj, struct kobj_attribute *attr,
-                          const char *buff, size_t count);
+			  const char *buff, size_t count);
 
 static struct kobj_attribute var_attr
     = __ATTR (var, 0660, var_show, var_store);
@@ -47,7 +47,7 @@ var_show (struct kobject *kobj, struct kobj_attribute *attr, char *buff)
 
 static ssize_t
 var_store (struct kobject *kobj, struct kobj_attribute *attr, const char *buff,
-           size_t count)
+	   size_t count)
 {
   sscanf (buff, "%d", &var);
   return count;

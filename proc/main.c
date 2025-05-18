@@ -11,9 +11,9 @@ static struct proc_dir_entry *hello_proc;
 static int hello_open (struct inode *inode, struct file *filp);
 static int hello_close (struct inode *inode, struct file *filp);
 static ssize_t hello_read (struct file *filp, char __user *buff, size_t size,
-                           loff_t *offp);
+			   loff_t *offp);
 static ssize_t hello_write (struct file *filp, const char __user *buff,
-                            size_t size, loff_t *offp);
+			    size_t size, loff_t *offp);
 
 static const struct proc_ops hello_fops = {
   .proc_open = hello_open,
@@ -86,7 +86,7 @@ hello_read (struct file *filp, char __user *buff, size_t size, loff_t *offp)
 
 static ssize_t
 hello_write (struct file *filp, const char __user *buff, size_t size,
-             loff_t *offp)
+	     loff_t *offp)
 {
   size = min (size, DATA_MAX);
 

@@ -16,7 +16,7 @@ static int hello_open (struct inode *, struct file *);
 static int hello_release (struct inode *, struct file *);
 static ssize_t hello_read (struct file *, char __user *, size_t, loff_t *);
 static ssize_t hello_write (struct file *, const char __user *, size_t,
-                            loff_t *);
+			    loff_t *);
 
 static const struct file_operations hello_fops = {
   .owner = THIS_MODULE,
@@ -125,7 +125,7 @@ hello_read (struct file *filp, char __user *buff, size_t size, loff_t *offp)
 
 static ssize_t
 hello_write (struct file *filp, const char __user *buff, size_t size,
-             loff_t *offp)
+	     loff_t *offp)
 {
   pr_alert ("This operation is not supported\n");
   return -EINVAL;
